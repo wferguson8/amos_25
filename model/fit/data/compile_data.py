@@ -4,7 +4,7 @@ This file is used to compile all the versions of the polls into one master resul
 
 """
 from typing import Dict, List
-
+import random as r
 import pandas as pd
 from pathlib import Path
 
@@ -72,7 +72,10 @@ def add_poll(file: pd.DataFrame, year: str) -> pd.DataFrame:
         pop_c = round(file[file['Party'] == 'Compassion'] / size, 2)
         pop_o = 1 - sum([pop_p, pop_v, pop_c])
 
-        items = [year, postal_code, size, vs_p, vs_v, vs_c, vs_o, hs_p, hs_v, hs_c, pop_p, pop_v, pop_c, pop_o, results[postal_code]]
+        winners = results[postal_code]
+        tiebreak = r.choice(winners) # In the event of a tie, break it randomly for the model fitting
+
+        items = [year, postal_code, size, vs_p, vs_v, vs_c, vs_o, hs_p, hs_v, hs_c, pop_p, pop_v, pop_c, pop_o, tiebreak]
         line = {}
         for idx, item in enumerate(columns):
             line.update({item: items[idx]})
