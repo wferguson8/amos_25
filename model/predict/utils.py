@@ -4,7 +4,9 @@ Stores data and info on the electoral college
 
 """
 
-electoral_college_info = {}
+electoral_college_info = {
+
+}
 
 state_data = [
     ["AL", 0, 0, 0],

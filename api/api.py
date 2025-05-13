@@ -1,10 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse, JSONResponse
 import os
+from dotenv import load_dotenv
 import pandas as pd
 from sqlalchemy import create_engine
 
 app = FastAPI()
+
+load_dotenv()
 
 DB_CONNECTION = os.getenv("DB_CONNECTION")
 engine = create_engine(DB_CONNECTION)
