@@ -19,8 +19,8 @@ def redir():
     return RedirectResponse(url="/docs")
 
 
-@app.get("/healthcheck")
-def healthcheck():
+@app.get("/health")
+def health():
     # Basic healthcheck endpoint
     return JSONResponse(content={"status": "ok"})
 
