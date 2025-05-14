@@ -376,7 +376,7 @@
 
   <script>
     // Fake example data for testing
-    const apiBase = 'http://localhost:8000' // Change once deployed
+    const apiBase = 'https://amos-25.onrender.com' // Change once deployed
 
     const electionData = {
       "Georgia": { party: "Party A", likelihood: 0.75 },
@@ -407,7 +407,7 @@
 
     async function fetchStateData(stateCode) {
       try {
-        const response = await fetch(`${apiBase}/results/state/${stateCode}`);
+        const response = await fetch(`${apiBase}/state_summary?state=${stateCode}`);
         return await response.json();
       } catch (err) {
         console.error(`Error fetching data for ${stateCode}:`, err);
