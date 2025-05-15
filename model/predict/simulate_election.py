@@ -91,7 +91,8 @@ def main():
         'state',
         'sims_p',  # Expressed as percents at the end
         'sims_v',
-        'sims_c'
+        'sims_c',
+        'sims_w' # Number of sims where the winner won the election
     ]
 
     winner_db = {
@@ -108,8 +109,11 @@ def main():
         totals, by_state = simulate_election(data)
         winner = calculate_results(totals)
         winner_db[f"wins_{winner.lower()}"] += 1
+
         for k, v in totals.items():
             summary_df.loc[k, f"sims_{v.lower()}"] += 1
+            if by_state[k] == winner:
+                summary_df.loc[k, 'sims_w'] += 1
 
     # convert totals to percentages
     summary_df = summary_df / 1000

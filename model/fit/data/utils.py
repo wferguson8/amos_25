@@ -65,7 +65,11 @@ important_keys = {
     "Vote"
 }
 
-home_states_2019 = {}
+home_states_2019 = {
+    "Perseverance": ["MO", "WA"],
+    "Vision": ["GA", "NC"],
+    "Compassion": ["FL"]
+}
 
 home_states_2020 = {}
 
@@ -75,11 +79,23 @@ home_states_2021 = {
     "Compassion": ["FL"]
 }
 
-home_states_2022 = {}
+home_states_2022 = {
+    "Perseverance": ["OK", "AL"],
+    "Vision": ["NC", "MO"],
+    "Compassion": ["NV", "AR"]
+}
 
-home_states_2023 = {}
+home_states_2023 = {
+    "Perseverance": ["OK", "TN"],
+    "Vision": ["MO", "CT"],
+    "Compassion": ["FL", "OR"]
+}
 
-home_states_2024 = {}
+home_states_2024 = {
+    "Perseverance": ["MS", "NC"],
+    "Vision": ["AL"],
+    "Compassion": ["IN", "TN"]
+}
 
 home_states = {
     "2019": home_states_2019,
@@ -107,11 +123,23 @@ candidates_2021 = {
     "Compassion": "Ethan Wright/Lauren Wagner"
 }
 
-candidates_2022 = {}
+candidates_2022 = {
+    "Perseverance": "Lillian Savage/Brooks Breedlove",
+    "Vision": "Corban Smith/Abbie George",
+    "Compassion": "Brayden Goodrich/Daniel Goff"
+}
 
-candidates_2023 = {}
+candidates_2023 = {
+    "Perseverance": "Bruce Bigler/Emma Freeland",
+    "Vision": "Brad Heredia/Lila Gebhart",
+    "Compassion": "Brennan Roub/Blaise Timmons"
+}
 
-candidates_2024 = {}
+candidates_2024 = {
+    "Perseverance": "Naomi Strozier/Joseph Jackson",
+    "Vision": "Jude Hutto/Brink Hutto",
+    "Compassion": "Esther Blake/Garrett Kramer"
+}
 
 # lookup table for results by year
 candidates = {

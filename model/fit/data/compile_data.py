@@ -29,7 +29,7 @@ columns = [
     'vs_c', # Vote share compassion
     'vs_o', # Vote share other/undecided
     'hs_p', 'hs_v', 'hs_c', # Home states by candidate
-    'pop_p', 'pop_v', 'pop_c', 'pop_o' # Share of population by part/unaffiliated
+    'pop_p', 'pop_v', 'pop_c', 'pop_o', # Share of population by part/unaffiliated
     'winner' # Who won the actual state
 ]
 
@@ -49,7 +49,7 @@ def add_poll(file: pd.DataFrame, year: str) -> pd.DataFrame:
     year_cand: Dict = candidates[year]
 
     states_in_poll = file['State'].unique().tolist()
-    results: List[Dict] = []
+    out: List[Dict] = []
     for state in states_in_poll:
         if len(state) > 2:
             postal_code = us_states[state]
@@ -57,30 +57,31 @@ def add_poll(file: pd.DataFrame, year: str) -> pd.DataFrame:
             postal_code = state
 
         # grab each value for the line in the output dataframe
-        size = file[file['State'] == state]
-        vs_p = round(file[file['Vote'] == year_cand['Perseverance']] / size, 2)
-        vs_v = round(file[file['Vote'] == year_cand['Vision']] / size, 2)
-        vs_c = round(file[file['Vote'] == year_cand['Compassion']] / size, 2)
-        vs_o = 1 - sum([vs_p, vs_v, vs_c])
+        data = file[file['State'] == state]
+        size = data.shape[0]
+        vs_p = round(data[data['Vote'] == year_cand['Perseverance']].shape[0] / size, 2)
+        vs_v = round(data[data['Vote'] == year_cand['Vision']].shape[0] / size, 2)
+        vs_c = round(data[data['Vote'] == year_cand['Compassion']].shape[0] / size, 2)
+        vs_o = round(1 - sum([vs_p, vs_v, vs_c]), 2)
 
-        hs_p = 1 if postal_code in home_states["Perseverance"] else 0
-        hs_v = 1 if postal_code in home_states["Vision"] else 0
-        hs_c = 1 if postal_code in home_states["Compassion"] else 0
+        hs_p = 1 if postal_code in home_states[year]["Perseverance"] else 0
+        hs_v = 1 if postal_code in home_states[year]["Vision"] else 0
+        hs_c = 1 if postal_code in home_states[year]["Compassion"] else 0
 
-        pop_p = round(file[file['Party'] == 'Perseverance'] / size, 2)
-        pop_v = round(file[file['Party'] == 'Vision'] / size, 2)
-        pop_c = round(file[file['Party'] == 'Compassion'] / size, 2)
-        pop_o = 1 - sum([pop_p, pop_v, pop_c])
+        pop_p = round(data[data['Party'] == 'Perseverance'].shape[0] / size, 2)
+        pop_v = round(data[data['Party'] == 'Vision'].shape[0] / size, 2)
+        pop_c = round(data[data['Party'] == 'Compassion'].shape[0] / size, 2)
+        pop_o = round(1 - sum([pop_p, pop_v, pop_c]), 2)
 
-        winners = results[postal_code]
+        winners = results[year][postal_code]
         tiebreak = r.choice(winners) # In the event of a tie, break it randomly for the model fitting
 
         items = [year, postal_code, size, vs_p, vs_v, vs_c, vs_o, hs_p, hs_v, hs_c, pop_p, pop_v, pop_c, pop_o, tiebreak]
         line = {}
         for idx, item in enumerate(columns):
             line.update({item: items[idx]})
-        results.append(line)
-    return pd.DataFrame(results)
+        out.append(line)
+    return pd.DataFrame(out)
 
 def main():
     """
@@ -92,8 +93,10 @@ def main():
     for file in SCRATCH_DIR.iterdir():
         if file.is_file() and file.suffix == ".csv":
             df = pd.read_csv(file)
-        if file.is_file() and file.suffix == ".xlsx":
+        elif file.is_file() and file.suffix == ".xlsx":
             df = pd.read_excel(file)
+        else:
+            continue
         year: str = file.name[0:4]
         lines = add_poll(
             file=df,
