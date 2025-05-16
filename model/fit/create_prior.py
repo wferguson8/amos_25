@@ -23,6 +23,7 @@ DATA_PATH = Path('./data/compiled_output.csv')
 
 # Load data as dataframe
 data = pd.read_csv(DATA_PATH)
+data["winner"] = data["winner"].astype("category")  # assign that as a category
 
 # Develop the formula
 base = 'winner ~ '
@@ -31,11 +32,14 @@ vote_shares = '(vs_p * hs_p) + (vs_v * hs_v) + (vs_c * hs_c) + vs_o + '
 pop_shares = '(pop_p * hs_p) + (pop_v * hs_v) + (pop_c * hs_c) + pop_o'
 formula = base + state_effect + vote_shares + pop_shares
 
+print(data[['vs_p', 'hs_p', 'vs_v', 'hs_v', 'vs_c', 'hs_c', 'vs_o', 'pop_p', 'pop_v', 'pop_c', 'pop_o']].shape)
+
 # initialize the model
 model = bmb.Model(
     formula,
     data,
-    dropna=True # Probably isn't necessary but here out of caution
+    family='categorical',
+    dropna=True  # Probably isn't necessary but here out of caution
 )
 
 results = model.fit()

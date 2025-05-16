@@ -22,7 +22,7 @@ from tqdm import tqdm
 from model.fit.create_prior import model
 from utils import electoral_college_info, state_data
 
-posterior = Path('./data/posterior.csv')
+posterior = Path('./data/compiled_output.csv')
 summary = Path('./data/summary.csv')
 winner_path = Path('./data/winner.csv')
 
