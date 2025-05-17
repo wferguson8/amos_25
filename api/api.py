@@ -28,7 +28,7 @@ def health():
 @app.get("/state_summary")
 def state_summary(state: str) -> JSONResponse:
     try:
-        response: dict = (
+        response = (
             supabase.table("summary")
             .select("*")
             .execute()
@@ -36,7 +36,11 @@ def state_summary(state: str) -> JSONResponse:
 
         print(response)
 
-        return JSONResponse(response[state])
+        df = pd.DataFrame(response.data)
+
+        output = df[df['state'] == state].to_dict()
+
+        return JSONResponse(output)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -48,6 +52,6 @@ def winner_summary():
             .select("*")
             .execute()
         )
-        return JSONResponse(response)
+        return JSONResponse(response.data[0]) # Should just be one row
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
