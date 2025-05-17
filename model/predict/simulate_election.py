@@ -16,13 +16,18 @@ import numpy as np
 import pandas as pd
 import os
 from sqlalchemy import create_engine
+from sqlalchemy.engine import URL
+import psycopg2
 from pathlib import Path
 from tqdm import tqdm
+from dotenv import load_dotenv
 import arviz as az
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Local Imports
 from utils import electoral_college_info, state_data
+
+load_dotenv() # For DB Uploads
 
 posterior_path = Path('./data/compiled_output.csv')
 summary = Path('./data/summary.csv')
@@ -99,10 +104,23 @@ def upload_results(df: pd.DataFrame, table:str) -> None:
     :return: None
     """
 
-    url = os.getenv('DB_CONNECTION')
-    engine = create_engine(url)
+    import logging
+    logging.basicConfig(level=logging.INFO)
 
-    df.to_sql(table, engine, if_exists='replace', index=False)
+    url = os.getenv('DB_CONNECTION')
+    if not url:
+        raise ValueError("DB_CONNECTION environment variable is not set.")
+
+    print("Connecting to database...")
+    engine = create_engine(url)
+    print("Connection established.")
+
+    try:
+        print("Uploading to table:", table)
+        df.to_sql(table, engine, if_exists='replace', index=False)
+        print("Upload successful.")
+    except Exception as e:
+        print("Upload failed:", e)
 
 
 def main():
