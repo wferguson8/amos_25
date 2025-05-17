@@ -29,7 +29,7 @@ from model.fit.data.utils import (
 from model.fit.data.results import results
 
 SCRATCH_DIR = Path('./scratch/')
-OUTPUT_PATH = './compiled_output.csv'
+OUTPUT_PATH = './data/compiled_output.csv'
 
 columns = [
     'year',
@@ -41,7 +41,6 @@ columns = [
     'vs_o', # Vote share other/undecided
     'hs_p', 'hs_v', 'hs_c', # Home states by candidate
     'pop_p', 'pop_v', 'pop_c', 'pop_o', # Share of population by part/unaffiliated
-    'winner' # Who won the actual state
 ]
 
 # Load important lists into memory you might need later
@@ -82,10 +81,7 @@ def add_poll(file: pd.DataFrame, year: str) -> pd.DataFrame:
         pop_c = round(data[data['Party'] == 'Compassion'].shape[0] / size, 2)
         pop_o = round(1 - sum([pop_p, pop_v, pop_c]), 2)
 
-        winners = results[year][postal_code]
-        tiebreak = r.choice(winners) # In the event of a tie, break it randomly for the model fitting
-
-        items = [year, postal_code, size, vs_p, vs_v, vs_c, vs_o, hs_p, hs_v, hs_c, pop_p, pop_v, pop_c, pop_o, tiebreak]
+        items = [year, postal_code, size, vs_p, vs_v, vs_c, vs_o, hs_p, hs_v, hs_c, pop_p, pop_v, pop_c, pop_o]
         line = {}
         for idx, item in enumerate(columns):
             line.update({item: items[idx]})

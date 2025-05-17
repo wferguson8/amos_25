@@ -97,13 +97,21 @@ home_states_2024 = {
     "Compassion": ["IN", "TN"]
 }
 
+# TODO: Update for hypotheticals
+home_states_2025 = {
+    "Perseverance": ["OK", "TN"],
+    "Vision": ["MI", "FL"],
+    "Compassion": ["MO", "OR"]
+}
+
 home_states = {
     "2019": home_states_2019,
     "2020": home_states_2020,
     "2021": home_states_2021,
     "2022": home_states_2022,
     "2023": home_states_2023,
-    "2024": home_states_2024
+    "2024": home_states_2024,
+    "2025": home_states_2025
 }
 
 # Candidates for each year by party
@@ -141,6 +149,13 @@ candidates_2024 = {
     "Compassion": "Esther Blake/Garrett Kramer"
 }
 
+# TODO: Update this with the actual candidates to get all possible options
+candidates_2025 = {
+    "Perseverance": "Clark Bigler/Grace Franklin",
+    "Vision": "Isaac Powers/Enrique Rodriguez",
+    "Compassion": "Jed Sicilia/Chesed Vess"
+}
+
 # lookup table for results by year
 candidates = {
     "2019": candidates_2019,
@@ -149,4 +164,5 @@ candidates = {
     "2022": candidates_2022,
     "2023": candidates_2023,
     "2024": candidates_2024,
+    "2025": candidates_2025
 }

@@ -17,35 +17,43 @@ import pandas as pd
 import bambi as bmb
 from pathlib import Path
 import arviz as az
+import os
 
-
+os.chdir(Path(__file__).parent.absolute())  # Change directory to ./data
 DATA_PATH = Path('./data/compiled_output.csv')
+POSTERIOR_PATH = Path('./data/posterior.nc')
 
-# Load data as dataframe
-data = pd.read_csv(DATA_PATH)
-data["winner"] = data["winner"].astype("category")  # assign that as a category
+def load_data() -> pd.DataFrame:
+    df = pd.read_csv(DATA_PATH)
+    df["winner"] = df["winner"].astype("category")
+    return df
 
-# Develop the formula
-base = 'winner ~ '
-state_effect = '(1|state) + '
-vote_shares = '(vs_p * hs_p) + (vs_v * hs_v) + (vs_c * hs_c) + vs_o + '
-pop_shares = '(pop_p * hs_p) + (pop_v * hs_v) + (pop_c * hs_c) + pop_o'
-formula = base + state_effect + vote_shares + pop_shares
+def build_model(data: pd.DataFrame) -> bmb.Model:
+    formula = (
+        "winner ~ "
+        "(vs_p * hs_p) + (vs_v * hs_v) + (vs_c * hs_c) + vs_o + "
+        "(pop_p * hs_p) + (pop_v * hs_v) + (pop_c * hs_c) + pop_o"
+    )
+    model = bmb.Model(formula, data, family='categorical', dropna=True)
+    return model
 
-print(data[['vs_p', 'hs_p', 'vs_v', 'hs_v', 'vs_c', 'hs_c', 'vs_o', 'pop_p', 'pop_v', 'pop_c', 'pop_o']].shape)
+## GLOBAL BUILD MODEL
+data = load_data()
+model = build_model(data)
 
-# initialize the model
-model = bmb.Model(
-    formula,
-    data,
-    family='categorical',
-    dropna=True  # Probably isn't necessary but here out of caution
-)
+def fit_and_save_model(model: bmb.Model, save_path: Path = POSTERIOR_PATH) -> az.InferenceData:
+    idata = model.fit()
+    idata.to_netcdf(save_path)
+    return idata
 
-results = model.fit()
+def load_posterior(path: Path = POSTERIOR_PATH) -> az.InferenceData:
+    return az.from_netcdf(path)
 
-# Inspect the model's results
-az.summary(results, hdi_prob=0.95)  # Posterior means, intervals, etc.
-az.plot_trace(results)              # Trace plots for diagnostics
+# Run this only if the script is executed directly
+if __name__ == '__main__':
+    os.chdir(Path(__file__).parent.absolute())  # Change working dir to this script's folder
 
-# The model object can be used for inference later on
+    posterior = fit_and_save_model(model)
+
+    print(az.summary(posterior, hdi_prob=0.95))
+    az.plot_trace(posterior)
