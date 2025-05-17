@@ -4,14 +4,15 @@ import os
 from dotenv import load_dotenv
 import pandas as pd
 from sqlalchemy import create_engine
+from supabase import create_client, Client
 
 app = FastAPI()
 
 load_dotenv()
 
-DB_CONNECTION = os.getenv("DB_CONNECTION")
-engine = create_engine(DB_CONNECTION)
-
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 
 @app.get("/")
 def redir():
@@ -27,16 +28,26 @@ def health():
 @app.get("/state_summary")
 def state_summary(state: str) -> JSONResponse:
     try:
-        df = pd.read_sql("SELECT * FROM summary", con=engine)
-        row = df.loc[state, :].to_dict()
-        return JSONResponse(row)
+        response: dict = (
+            supabase.table("summary")
+            .select("*")
+            .execute()
+        )
+
+        print(response)
+
+        return JSONResponse(response[state])
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("winner_summary")
 def winner_summary():
     try:
-        df = pd.read_sql("SELECT * FROM winner", con=engine).to_dict()
-        return JSONResponse(df)
+        response = (
+            supabase.table("planets")
+            .select("*")
+            .execute()
+        )
+        return JSONResponse(response)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
