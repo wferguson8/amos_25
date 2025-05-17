@@ -52,6 +52,6 @@ def winner_summary():
             .select("*")
             .execute()
         )
-        return JSONResponse(response.data[0]) # Should just be one row
+        return JSONResponse(response.data[0])  # Should just be one row
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
