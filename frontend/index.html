@@ -417,47 +417,70 @@
 
     document.querySelectorAll("g.state path").forEach(async (path) => {
         const titleTag = path.querySelector("title");
-        if (!titleTag) return;
+      if (!titleTag) return;
 
-        const stateName = titleTag.textContent.trim();
-        const stateCode = getStateCodeFromName(stateName);
-        if (!stateCode) return;
+      const stateName = titleTag.textContent.trim();
+      const stateCode = getStateCodeFromName(stateName);
+      if (!stateCode) return;
 
-        const data = await fetchStateData(stateCode);
-        if (!data) return;
+      const data = await fetchStateData(stateCode);
+      if (!data) return;
 
-        const party = data.favored_candidate; // Change these based on actual JSON Response format
-        const likelihood = data.likelihoods[party]; // See above
-        const baseColor = partyColors[party] || "#cccccc";
-        let fillColor;
-        fillColor = shadeColor(baseColor, likelihood);
+      // Extract values from FastAPI response
+      const simsP = parseFloat(data["sims_p"]["0"]);
+      const simsV = parseFloat(data["sims_v"]["0"]);
+      const simsC = parseFloat(data["sims_c"]["0"]);
+      const simsW = parseFloat(data["sims_w"]["0"]);
 
-        path.style.fill = fillColor;
-        path.style.cursor = "pointer";
+      // Determine the favored candidate and their likelihood
+      const likelihoods = {
+        "Candidate A": simsP,
+        "Candidate B": simsV,
+        "Candidate C": simsC
+      };
 
-        path.addEventListener("mouseover", () => {
-          tooltip.innerHTML = `
-            <strong>${stateName}</strong><br>
-            Favored: ${party}<br>
-            Likelihood: ${(likelihood * 100).toFixed(1)}%
-          `;
-          tooltip.style.display = "block";
-        });
+      const favoredCandidate = Object.entries(likelihoods).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
+      const favoredLikelihood = likelihoods[favoredCandidate];
 
-        path.addEventListener("mousemove", (e) => {
-          tooltip.style.left = e.pageX + 10 + "px";
-          tooltip.style.top = e.pageY + 10 + "px";
-        });
+      console.log(`${stateCode}:`, {
+        simsP, simsV, simsC, simsW,
+        favoredCandidate,
+        favoredLikelihood,
+        baseColor,
+        fillColor
+      });
 
-        path.addEventListener("mouseleave", () => {
-          tooltip.style.display = "none";
-        });
+      const baseColor = partyColors[favoredCandidate] || "#cccccc";
+      const fillColor = shadeColor(baseColor, favoredLikelihood);
 
-        path.addEventListener("click", () => {
-          alert(`${stateName}\nFavored: ${party}\nLikelihood: ${(likelihood * 100).toFixed(1)}%`);
-        });
+      path.style.fill = fillColor;
+      path.style.cursor = "pointer";
+
+      path.addEventListener("mouseover", () => {
+        tooltip.innerHTML = `
+          <strong>${stateName}</strong><br>
+          Favored: ${favoredCandidate}<br>
+          Candidate A: ${(simsP * 100).toFixed(1)}%<br>
+          Candidate B: ${(simsV * 100).toFixed(1)}%<br>
+          Candidate C: ${(simsC * 100).toFixed(1)}%<br>
+          <em>State winner won election in ${(simsW * 100).toFixed(1)}% of simulations</em>
+        `;
+        tooltip.style.display = "block";
+      });
+
+      path.addEventListener("mousemove", (e) => {
+        tooltip.style.left = e.pageX + 10 + "px";
+        tooltip.style.top = e.pageY + 10 + "px";
+      });
+
+      path.addEventListener("mouseleave", () => {
+        tooltip.style.display = "none";
+      });
+
+      path.addEventListener("click", () => {
+        alert(`${stateName}\nFavored: ${favoredCandidate}\n\nCandidate A: ${(simsP * 100).toFixed(1)}%\nCandidate B: ${(simsV * 100).toFixed(1)}%\nCandidate C: ${(simsC * 100).toFixed(1)}%\n\nState winner won election in ${(simsW * 100).toFixed(1)}% of simulations`);
+      });
     });
-
   function getStateCodeFromName(name) {
     const mapping = {
       "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR",
