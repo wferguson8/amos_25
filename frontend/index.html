@@ -75,7 +75,7 @@
 
   <div id="map-container">
     <!-- MAP ICONS HERE -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 959 593" width="100%" height="auto" preserveAspectRatio="xMidYMid meet">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 959 593" style="width: 100%; height: auto;"  preserveAspectRatio="xMidYMid meet">
       <title>Blank map of the United States, territories not included</title>
       <defs>
       <style type="text/css">
@@ -441,14 +441,6 @@
 
       const favoredCandidate = Object.entries(likelihoods).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
       const favoredLikelihood = likelihoods[favoredCandidate];
-
-      console.log(`${stateCode}:`, {
-        simsP, simsV, simsC, simsW,
-        favoredCandidate,
-        favoredLikelihood,
-        baseColor,
-        fillColor
-      });
 
       const baseColor = partyColors[favoredCandidate] || "#cccccc";
       const fillColor = shadeColor(baseColor, favoredLikelihood);

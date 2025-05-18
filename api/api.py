@@ -35,21 +35,23 @@ def health():
     return JSONResponse(content={"status": "ok"})
 
 @app.get("/state_summary")
-def state_summary(state: str) -> JSONResponse:
+def state_summary() -> JSONResponse:
     try:
-        response = (
-            supabase.table("summary")
-            .select("*")
-            .execute()
-        )
+        response = supabase.table("summary").select("*").execute()
 
-        print(response)
+        # Check for errors in response
+        if not response.data:
+            raise Exception("No data returned from Supabase.")
 
         df = pd.DataFrame(response.data)
 
-        output = df[df['state'] == state].to_dict()
+        # Ensure state codes are uppercase
+        df["state"] = df["state"].str.upper()
 
-        return JSONResponse(output)
+        # Set 'state' as index and convert to dict of dicts
+        summaries = df.set_index("state")[["sims_p", "sims_v", "sims_c", "sims_w"]].to_dict(orient="index")
+
+        return JSONResponse(summaries)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
