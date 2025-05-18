@@ -386,9 +386,9 @@
     };
 
     const partyColors = {
-      "Party A": "#4285F4",  // blue
-      "Party B": "#EA4335",  // red
-      "Party C": "#FBBC05"   // yellow
+      "Candidate A": "#4285F4",  // blue
+      "Candidate B": "#EA4335",  // red
+      "Candidate C": "#FBBC05"   // yellow
     };
 
     const tooltip = document.getElementById("tooltip");
@@ -415,32 +415,36 @@
       }
     }
 
-    document.querySelectorAll("g.state path").forEach(async (path) => {
-        const titleTag = path.querySelector("title");
+    (async function () {
+    const allData = await fetchAllStateData();
+
+    document.querySelectorAll("g.state path").forEach((path) => {
+      const titleTag = path.querySelector("title");
       if (!titleTag) return;
 
       const stateName = titleTag.textContent.trim();
       const stateCode = getStateCodeFromName(stateName);
-      if (!stateCode) return;
+      if (!stateCode || !allData[stateCode]) return;
 
-      const data = await fetchStateData(stateCode);
-      if (!data) return;
+      const data = allData[stateCode];
 
-      // Extract values from FastAPI response
-      const simsP = parseFloat(data["sims_p"]["0"]);
-      const simsV = parseFloat(data["sims_v"]["0"]);
-      const simsC = parseFloat(data["sims_c"]["0"]);
-      const simsW = parseFloat(data["sims_w"]["0"]);
+      const simsP = parseFloat(data["sims_p"]);
+      const simsV = parseFloat(data["sims_v"]);
+      const simsC = parseFloat(data["sims_c"]);
+      const simsW = parseFloat(data["sims_w"]);
 
-      // Determine the favored candidate and their likelihood
       const likelihoods = {
         "Candidate A": simsP,
         "Candidate B": simsV,
         "Candidate C": simsC
       };
 
-      const favoredCandidate = Object.entries(likelihoods).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
+      const favoredCandidate = Object.entries(likelihoods).reduce(
+        (a, b) => (b[1] > a[1] ? b : a)
+      )[0];
       const favoredLikelihood = likelihoods[favoredCandidate];
+
+      console.log(favoredCandidate)
 
       const baseColor = partyColors[favoredCandidate] || "#cccccc";
       const fillColor = shadeColor(baseColor, favoredLikelihood);
@@ -468,11 +472,20 @@
       path.addEventListener("mouseleave", () => {
         tooltip.style.display = "none";
       });
-
-      path.addEventListener("click", () => {
-        alert(`${stateName}\nFavored: ${favoredCandidate}\n\nCandidate A: ${(simsP * 100).toFixed(1)}%\nCandidate B: ${(simsV * 100).toFixed(1)}%\nCandidate C: ${(simsC * 100).toFixed(1)}%\n\nState winner won election in ${(simsW * 100).toFixed(1)}% of simulations`);
-      });
     });
+
+    async function fetchAllStateData() {
+      try {
+        const response = await fetch(`${apiBase}/state_summary`);
+        if (!response.ok) throw new Error("Failed to fetch");
+        return await response.json();
+      } catch (e) {
+        console.error("Error fetching state summaries:", e);
+        return {};
+      }
+    }
+  })();
+
   function getStateCodeFromName(name) {
     const mapping = {
       "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR",
