@@ -4,8 +4,64 @@ This file contains dictionaries with the past results of relevant elections
 - key: postal code
 - value: tuple of parties that won the state (to include ties)
 """
+results_2018 = {
+    'AL': ('P',),
+    'AK': ('P',),
+    'AZ': ('P',),
+    'AR': ('P',),
+    'CO': ('C',),
+    'CT': ('P',),
+    'DE': ('V',),
+    'FL': ('P',),
+    'GA': ('V',),
+    'HI': ('P',),
+    'IL': ('C',),
+    'IN': ('V',),
+    'IA': ('C',),
+    'KY': ('V',),
+    'LA': ('V',),
+    'ME': ('P',),
+    'MD': ('P',),
+    'MA': ('P',),
+    'MI': ('C', 'V'),  # Forehand/Streyle tie
+    'MS': ('P',),
+    'MT': ('P',),
+    'NE': ('C',),
+    'NH': ('V',),
+    'NY': ('P', 'V'),  # Forehand/Gould tie
+    'NC': ('P',),
+    'OH': ('C',),
+    'OK': ('P',),
+    'OR': ('V',),
+    'PA': ('P',),
+    'RI': ('P', 'V'),  # Forehand/Gould tie
+    'SC': ('V',),
+    'SD': ('C',),
+    'TN': ('P',),
+    'TX': ('V',),
+    'VA': ('P',),
+    'WA': ('P',),
+    'WI': ('C',),
+    'WY': ('C',)
+}
 
-results_2019 = {}
+results_2019 = {
+    'AZ': ('P',),
+    'MT': ('P',),
+    'WY': ('P',),
+    'MN': ('P',),
+    'ME': ('P',),
+    'MS': ('V',),
+    'OH': ('V',),
+    'MI': ('V',),
+    'RI': ('V',),
+    'MA': ('V',),
+    'GA': ('V',),
+    'FL': ('C',),
+    'MO': ('P',),
+    'WA': ('P',),
+    'NC': ('V',),
+}
 
 results_2020 = {}  # Probably not going to worry about filling this out beacause of lack of data
 
@@ -222,6 +278,7 @@ results_2024 = {
 }
 
 results = {
+    '2018': results_2018,
     '2019': results_2019,
     '2020': results_2020,
     '2021': results_2021,

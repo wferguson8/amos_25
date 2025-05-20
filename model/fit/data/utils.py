@@ -65,6 +65,12 @@ important_keys = {
     "Vote"
 }
 
+home_states_2018 = {
+    "Perseverance": ["OK", "PA"],
+    "Vision": ["GA", "OK"],
+    "Compassion": ["CO", "IL"]
+}
+
 home_states_2019 = {
     "Perseverance": ["MO", "WA"],
     "Vision": ["GA", "NC"],
@@ -105,6 +111,7 @@ home_states_2025 = {
 }
 
 home_states = {
+    "2018": home_states_2018,
     "2019": home_states_2019,
     "2020": home_states_2020,
     "2021": home_states_2021,
@@ -114,8 +121,17 @@ home_states = {
     "2025": home_states_2025
 }
 
+candidates_2018 = {
+    "Perseverance": "Carissa Gould/Toby DeMoss",
+    "Vision": "Truman Forehand/Grant Johnson",
+    "Compassion": "Noah Streyle/Christa Kaufman"
+}
+
 # Candidates for each year by party
 candidates_2019 = {
+    "Perseverance": "Isaac Richardson/Biani Benitez",
+    "Vision": "Toby Forehand/Madelyn McDonald",
+    "Compassion": "Libby Robinson/Anna Adams"
 }
 
 # Likely no meaningful data from 2020 due to pandemic
@@ -158,6 +174,7 @@ candidates_2025 = {
 
 # lookup table for results by year
 candidates = {
+    "2018": candidates_2018,
     "2019": candidates_2019,
     "2020": candidates_2020,
     "2021": candidates_2021,

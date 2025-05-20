@@ -51,36 +51,41 @@ def add_poll(file: pd.DataFrame, year: str) -> pd.DataFrame:
     states_in_poll = file['State'].unique().tolist()
     out: List[Dict] = []
     for state in states_in_poll:
-        if len(state) > 2:
-            postal_code = us_states[state]
-        else:
-            postal_code = state
+        try:
+            if type(state) is not str:
+                continue
+            if len(state) > 2:
+                postal_code = us_states[state]
+            else:
+                postal_code = state
 
-        # grab each value for the line in the output dataframe
-        data = file[file['State'] == state]
-        size = data.shape[0]
-        vs_p = round(data[data['Vote'] == year_cand['Perseverance']].shape[0] / size, 2)
-        vs_v = round(data[data['Vote'] == year_cand['Vision']].shape[0] / size, 2)
-        vs_c = round(data[data['Vote'] == year_cand['Compassion']].shape[0] / size, 2)
-        vs_o = round(1 - sum([vs_p, vs_v, vs_c]), 2)
+            # grab each value for the line in the output dataframe
+            data = file[file['State'] == state]
+            size = data.shape[0]
+            vs_p = round(data[data['Vote'] == year_cand['Perseverance']].shape[0] / size, 2)
+            vs_v = round(data[data['Vote'] == year_cand['Vision']].shape[0] / size, 2)
+            vs_c = round(data[data['Vote'] == year_cand['Compassion']].shape[0] / size, 2)
+            vs_o = round(1 - sum([vs_p, vs_v, vs_c]), 2)
 
-        hs_p = 1 if postal_code in home_states[year]["Perseverance"] else 0
-        hs_v = 1 if postal_code in home_states[year]["Vision"] else 0
-        hs_c = 1 if postal_code in home_states[year]["Compassion"] else 0
+            hs_p = 1 if postal_code in home_states[year]["Perseverance"] else 0
+            hs_v = 1 if postal_code in home_states[year]["Vision"] else 0
+            hs_c = 1 if postal_code in home_states[year]["Compassion"] else 0
 
-        pop_p = round(data[data['Party'] == 'Perseverance'].shape[0] / size, 2)
-        pop_v = round(data[data['Party'] == 'Vision'].shape[0] / size, 2)
-        pop_c = round(data[data['Party'] == 'Compassion'].shape[0] / size, 2)
-        pop_o = round(1 - sum([pop_p, pop_v, pop_c]), 2)
+            pop_p = round(data[data['Party'] == 'Perseverance'].shape[0] / size, 2)
+            pop_v = round(data[data['Party'] == 'Vision'].shape[0] / size, 2)
+            pop_c = round(data[data['Party'] == 'Compassion'].shape[0] / size, 2)
+            pop_o = round(1 - sum([pop_p, pop_v, pop_c]), 2)
 
-        winners = results[year][postal_code]
-        tiebreak = r.choice(winners) # In the event of a tie, break it randomly for the model fitting
+            winners = results[year][postal_code]
+            tiebreak = r.choice(winners) # In the event of a tie, break it randomly for the model fitting
 
-        items = [year, postal_code, size, vs_p, vs_v, vs_c, vs_o, hs_p, hs_v, hs_c, pop_p, pop_v, pop_c, pop_o, tiebreak]
-        line = {}
-        for idx, item in enumerate(columns):
-            line.update({item: items[idx]})
-        out.append(line)
+            items = [year, postal_code, size, vs_p, vs_v, vs_c, vs_o, hs_p, hs_v, hs_c, pop_p, pop_v, pop_c, pop_o, tiebreak]
+            line = {}
+            for idx, item in enumerate(columns):
+                line.update({item: items[idx]})
+            out.append(line)
+        except Exception as e:
+            continue
     return pd.DataFrame(out)
 
 def main():
