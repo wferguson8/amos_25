@@ -26,12 +26,13 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Local Imports
 from utils import electoral_college_info, state_data
+from model.fit.data.utils import home_states
 
 load_dotenv() # For DB Uploads
 
 posterior_path = Path('./data/compiled_output.csv')
-summary = Path('./data/summary.csv')
-winner_path = Path('./data/winner.csv')
+summary = Path('data/summary_test.csv')
+winner_path = Path('data/winner_test.csv')
 
 labels = ["C", "P", "V"]
 
@@ -72,6 +73,9 @@ def simulate_election(sample: pd.DataFrame) -> Tuple[Dict[str, int], Dict[Any, A
     completed_states = []
     for state, winner in zip(state_predictions.index, state_predictions.values):
         w = labels[int(winner)]
+        if w == "P":
+            if random.random() < 0.10 and state not in home_states["2025"]["Perseverance"]:
+                w = random.choice(["C", "V"]) # This is where things get a little bit demented
         value = electoral_college_info[state]
         predicted_totals[w] += value
         predicted_by_state[state] = w
@@ -164,7 +168,7 @@ def main():
     summary_df.set_index("state", inplace=True)
 
     # Simulate a whole bunch of elections (increase once testing is done completely)
-    NUM_SIMS = 1000
+    NUM_SIMS = 10000
     with ProcessPoolExecutor() as executor:
         futures = [executor.submit(simulate_election, data) for _ in range(NUM_SIMS)]
         for future in tqdm(as_completed(futures)):
@@ -178,7 +182,7 @@ def main():
                     summary_df.loc[k, 'sims_w'] += 1
 
     # convert totals to percentages
-    summary_df = summary_df / 1000
+    summary_df = summary_df / NUM_SIMS
 
     # Upload results
     # upload_results(summary_df, 'summary')

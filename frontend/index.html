@@ -487,8 +487,8 @@
     };
 
     const partyColors = {
-      "Bigler/Franklin": "#0F91A7",  // Perseverance
-      "Powers/Rodriguez": "#F3C643",  // Vision
+      "Duncan/Southerland": "#0F91A7",  // Perseverance
+      "Carr/Hammett": "#F3C643",  // Vision
       "Jackson/Willson": "#FD2040"   // Compassion
     };
 
@@ -535,8 +535,8 @@
       const simsW = parseFloat(data["sims_w"]);
 
       const likelihoods = {
-        "Bigler/Franklin": simsP,
-        "Powers/Rodriguez": simsV,
+        "Duncan/Southerland": simsP,
+        "Carr/Hammett": simsV,
         "Jackson/Willson": simsC
       };
 
@@ -580,7 +580,7 @@
               <svg class="progress-ring" width="32" height="32">
                 <circle class="ring-bg" cx="16" cy="16" r="14"/>
                 <circle class="ring-fill" cx="16" cy="16" r="14" stroke="${baseColor}" transform="rotate(-90 16 16)" stroke-dashoffset="${offset}"/>
-                <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#FFFFFF">${percent}%</text>
+                <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#000000">${percent}%</text>
               </svg>
               <span class="favored-text">${favoredCandidate}</span>
             </div>

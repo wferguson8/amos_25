@@ -105,9 +105,9 @@ home_states_2024 = {
 
 # TODO: Update for hypotheticals
 home_states_2025 = {
-    "Perseverance": ["OK", "TN"],
-    "Vision": ["MI", "FL"],
-    "Compassion": ["MO", "OR"]
+    "Perseverance": ["OK", "TN", "AZ", "NV"],
+    "Vision": ["MI", "FL", "MO", "OR"],
+    "Compassion": ["MO", "OR", "NC"]
 }
 
 home_states = {

@@ -29,7 +29,7 @@ from model.fit.data.utils import (
 from model.fit.data.results import results
 
 SCRATCH_DIR = Path('./scratch/')
-OUTPUT_PATH = './data/compiled_output.csv'
+OUTPUT_PATH = './compiled_output.csv'
 
 columns = [
     'year',
